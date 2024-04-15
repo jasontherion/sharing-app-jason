@@ -77,20 +77,20 @@ public class ItemList {
         }
     }
 
-    public void saveItems(Context context) {
-        try {
-            FileOutputStream fos = context.openFileOutput(FILENAME, 0);
-            OutputStreamWriter osw = new OutputStreamWriter(fos);
-            Gson gson = new Gson();
-            gson.toJson(items, osw);
-            osw.flush();
-            fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void saveItems(Context context) {
+//        try {
+//            FileOutputStream fos = context.openFileOutput(FILENAME, 0);
+//            OutputStreamWriter osw = new OutputStreamWriter(fos);
+//            Gson gson = new Gson();
+//            gson.toJson(items, osw);
+//            osw.flush();
+//            fos.close();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public ArrayList<Item> filterItemsByStatus(String status){
         ArrayList<Item> selected_items = new ArrayList<>();
@@ -112,5 +112,26 @@ public class ItemList {
         }
         return borrowers_active;
     }
+
+    public boolean saveItems(Context context) {
+        try {
+            FileOutputStream fos = context.openFileOutput(FILENAME, 0);
+            OutputStreamWriter osw = new OutputStreamWriter(fos);
+            Gson gson = new Gson();
+            gson.toJson(items, osw);
+            osw.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+
+
 }
 

@@ -64,8 +64,15 @@ public class EditContactActivity extends AppCompatActivity {
 
         Contact updated_contact = new Contact(username_str, email_str, id);
 
-        contact_list.addContact(updated_contact);
-        contact_list.saveContacts(context);
+//        contact_list.addContact(updated_contact);
+//        contact_list.saveContacts(context);
+        EditContactCommand edit_contact_command = new EditContactCommand(contact_list, contact, updated_contact,context);
+        edit_contact_command.execute();
+
+        boolean success = edit_contact_command.isExecuted();
+        if (!success){
+            return;
+        }
 
         // End EditContactActivity
         finish();

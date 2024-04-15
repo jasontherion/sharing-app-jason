@@ -100,7 +100,22 @@ public class ContactList {
         }
     }
 
-    public void saveContacts(Context context) {
+//    public void saveContacts(Context context) {
+//        try {
+//            FileOutputStream fos = context.openFileOutput(FILENAME, 0);
+//            OutputStreamWriter osw = new OutputStreamWriter(fos);
+//            Gson gson = new Gson();
+//            gson.toJson(contacts, osw);
+//            osw.flush();
+//            fos.close();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+    public boolean saveContacts(Context context) {
         try {
             FileOutputStream fos = context.openFileOutput(FILENAME, 0);
             OutputStreamWriter osw = new OutputStreamWriter(fos);
@@ -110,10 +125,14 @@ public class ContactList {
             fos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            return false;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
+
 
     public boolean isUsernameAvailable(String username) {
 
