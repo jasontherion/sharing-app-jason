@@ -10,10 +10,15 @@ import androidx.appcompat.app.AppCompatActivity;
 public class AddContactActivity extends AppCompatActivity {
 
     private ContactList contact_list = new ContactList();
+    private ContactListController contact_list_controller = new ContactListController(contact_list);
+
     private Context context;
 
     private EditText username;
     private EditText email;
+
+    private String username_str;
+    private String email_str;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,48 +29,54 @@ public class AddContactActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.email);
 
         context = getApplicationContext();
+        contact_list_controller.loadContacts(context);
         contact_list.loadContacts(context);
     }
 
     public void saveContact(View view) {
-
-        String username_str = username.getText().toString();
-        String email_str = email.getText().toString();
-
-        if (username_str.equals("")) {
-            username.setError("Empty field!");
-            return;
-        }
-
-        if (email_str.equals("")) {
-            email.setError("Empty field!");
-            return;
-        }
-
-        if (!email_str.contains("@")){
-            email.setError("Must be an email address!");
-            return;
-        }
-
-        if (!contact_list.isUsernameAvailable(username_str)){
-            username.setError("Username already taken!");
+        if (!validateInput()) {
             return;
         }
 
         Contact contact = new Contact(username_str, email_str, null);
 
-//        contact_list.addContact(contact);
-//        contact_list.saveContacts(context);
-        AddContactCommand add_contact_command = new AddContactCommand(contact_list,contact,context);
-        add_contact_command.execute();
-
-        boolean success = add_contact_command.isExecuted();
-        if (!success){
+        // Add Contact
+        boolean success = contact_list_controller.addContact(contact, context);
+        if (!success) {
             return;
         }
 
-
         // End AddContactActivity
         finish();
+    }
+
+    public boolean validateInput() {
+
+        boolean validData = true;
+
+        username_str = username.getText().toString();
+        email_str = email.getText().toString();
+
+        if (username_str.equals("")) {
+            username.setError("Empty field!");
+            validData = false;
+        }
+
+        if (email_str.equals("")) {
+            email.setError("Empty field!");
+            validData = false;
+        }
+
+        if (!email_str.contains("@")){
+            email.setError("Must be an email address!");
+            validData = false;
+        }
+
+        if (!contact_list_controller.isUsernameAvailable(username_str)){
+            username.setError("Username already taken!");
+            validData = false;
+        }
+
+        return validData;
     }
 }

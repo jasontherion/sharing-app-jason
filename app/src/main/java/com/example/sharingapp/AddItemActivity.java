@@ -27,12 +27,21 @@ public class AddItemActivity extends AppCompatActivity {
     private int REQUEST_CODE = 1;
 
     private ItemList item_list = new ItemList();
+    private ItemListController item_list_controller = new ItemListController(item_list);
+
     private Context context;
 
+    private String title_str;
+    private String maker_str;
+    private String description_str;
+    private String length_str;
+    private String width_str;
+    private String height_str;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_add_item);
 
         title = (EditText) findViewById(R.id.title);
@@ -46,61 +55,23 @@ public class AddItemActivity extends AppCompatActivity {
         photo.setImageResource(android.R.drawable.ic_menu_gallery);
 
         context = getApplicationContext();
-        item_list.loadItems(context);
+        item_list_controller.loadItems(context);
     }
 
     public void saveItem (View view) {
 
-        String title_str = title.getText().toString();
-        String maker_str = maker.getText().toString();
-        String description_str = description.getText().toString();
-        String length_str = length.getText().toString();
-        String width_str = width.getText().toString();
-        String height_str = height.getText().toString();
-
-
-
-        if (title_str.equals("")) {
-            title.setError("Empty field!");
+        if (!validateInput()) {
             return;
         }
-
-        if (maker_str.equals("")) {
-            maker.setError("Empty field!");
-            return;
-        }
-
-        if (description_str.equals("")) {
-            description.setError("Empty field!");
-            return;
-        }
-
-        if (length_str.equals("")) {
-            length.setError("Empty field!");
-            return;
-        }
-
-        if (width_str.equals("")) {
-            width.setError("Empty field!");
-            return;
-        }
-
-        if (height_str.equals("")) {
-            height.setError("Empty field!");
-            return;
-        }
-
         Dimensions dimensions = new Dimensions(length_str, width_str, height_str);
-        Item item = new Item(title_str, maker_str, description_str, dimensions, image, null );
 
-//        item_list.addItem(item);
-//        item_list.saveItems(context);
+        Item item = new Item(title_str, maker_str, description_str, dimensions, image, null);
+        ItemController item_controller = new ItemController(item);
+        item_controller.setDimensions(dimensions);
 
-        AddItemCommand add_item_command = new AddItemCommand(item_list, item, context);
-        add_item_command.execute();
-
-        boolean success = add_item_command.isExecuted();
-        if (!success){
+        // Add item
+        boolean success = item_list_controller.addItem(item, context);
+        if (!success) {
             return;
         }
 
@@ -131,4 +102,49 @@ public class AddItemActivity extends AppCompatActivity {
             super.onActivityResult(request_code, result_code, intent);
         }
     }
+
+    public boolean validateInput() {
+
+        boolean validData = true;
+
+        title_str = title.getText().toString();
+        maker_str = maker.getText().toString();
+        description_str = description.getText().toString();
+        length_str = length.getText().toString();
+        width_str = width.getText().toString();
+        height_str = height.getText().toString();
+
+        if (title_str.equals("")) {
+            title.setError("Empty field!");
+            validData = false;
+        }
+
+        if (maker_str.equals("")) {
+            maker.setError("Empty field!");
+            validData = false;
+        }
+
+        if (description_str.equals("")) {
+            description.setError("Empty field!");
+            validData = false;
+        }
+
+        if (length_str.equals("")) {
+            length.setError("Empty field!");
+            validData = false;
+        }
+
+        if (width_str.equals("")) {
+            width.setError("Empty field!");
+            validData = false;
+        }
+
+        if (height_str.equals("")) {
+            height.setError("Empty field!");
+            validData = false;
+        }
+
+        return validData;
+    }
+
 }
